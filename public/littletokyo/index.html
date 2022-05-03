@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>3D Hologram</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link type="text/css" rel="stylesheet" href="/main.css">
+	</head>
+
+			<style>
+				body {
+					background-color: #bfe3dd;
+					color: #000;
+					margin: 0;
+				}
+
+				a {
+					color: #2983ff;
+				}
+			</style>
+	<body>
+
+		<div id="container"></div>
+
+		<!-- Import maps polyfill -->
+		<!-- Remove this when import maps will be widely supported -->
+		<script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
+
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "./build/three.module.js"
+				}
+			}
+		</script>
+
+		<script type="module">
+
+			import * as THREE from 'three';
+
+			import { PeppersGhostEffect } from '../PeppersGhostEffect.js';
+			import { GLTFLoader } from "../loaders/GLTFLoader.js";
+			import { DRACOLoader } from "../loaders/DRACOLoader.js";
+			import { OrbitControls } from '../controls/OrbitControls.js';
+			import { RoomEnvironment } from '../environments/RoomEnvironment.js';
+
+			import Stats from '../libs/stats.module.js';
+
+
+
+			let container;
+
+			let camera, scene, renderer, effect;
+			let group;
+
+			init();
+			animate();
+
+			function init() {
+
+
+				container = document.getElementById( 'container' );
+				const stats = new Stats();
+				container.appendChild(stats.dom);
+
+				camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 100000 );
+				scene = new THREE.Scene();
+
+				group = new THREE.Group();
+				scene.add( group );
+
+				// Cube
+
+				const geometry = new THREE.BoxGeometry().toNonIndexed(); // ensure unique vertices for each triangle
+
+				const position = geometry.attributes.position;
+				const colors = [];
+				const color = new THREE.Color();
+
+				// generate for each side of the cube a different color
+
+				for ( let i = 0; i < position.count; i += 6 ) {
+
+					// color.setHex( Math.random() * 0xffffff );
+
+					// first face
+
+					colors.push( color.r, color.g, color.b );
+					colors.push( color.r, color.g, color.b );
+					colors.push( color.r, color.g, color.b );
+
+					// second face
+
+					colors.push( color.r, color.g, color.b );
+					colors.push( color.r, color.g, color.b );
+					colors.push( color.r, color.g, color.b );
+
+				}
+
+				const loader = new GLTFLoader();
+				const dracoLoader = new DRACOLoader();
+
+				dracoLoader.setDecoderPath( '../draco/');
+				loader.setDRACOLoader( dracoLoader );
+
+
+				loader.load('../gltf/LittlestTokyo.glb', ( gltf ) => {
+					const model = gltf.scene;
+					model.position.set( 1, 1, 0 );
+					model.scale.set( 0.01, 0.01, 0.01 );
+					group.add( model );
+
+					console.log(model);
+
+					animate();
+				});
+
+				geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
+
+				const material = new THREE.MeshBasicMaterial( { vertexColors: true } );
+
+				renderer = new THREE.WebGLRenderer();
+				renderer.setPixelRatio( window.devicePixelRatio );
+				scene.background = new THREE.Color( 0xfffff );
+				renderer.outputEncoding = THREE.sRGBEncoding;
+				container.appendChild( renderer.domElement );
+
+				const pmremGenerator = new THREE.PMREMGenerator( renderer );
+				scene.environment = pmremGenerator.fromScene( new RoomEnvironment(), 0.04 ).texture;
+
+				effect = new PeppersGhostEffect( renderer );
+				effect.setSize( window.innerWidth, window.innerHeight );
+				effect.cameraDistance = 8;
+
+				window.addEventListener( 'resize', onWindowResize );
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				effect.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+				group.rotation.y += 0.01;
+
+				effect.render( scene, camera );
+
+			}
+
+		</script>
+
+	</body>
+</html>
