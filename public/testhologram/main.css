@@ -1,12 +1,15 @@
 body {
 	margin: 0;
-	background-color: #000;
 	color: #fff;
 	font-family: Monospace;
 	font-size: 13px;
 	line-height: 24px;
 	overscroll-behavior: none;
 }
+
+
+/* CSS */
+
 
 a {
 	color: #ff0;
@@ -68,7 +71,6 @@ a, button, input, select {
 	align-items: center;
 	justify-content: center;
 	flex-direction: column;
-	background: rgba(0,0,0,0.7);
 }
 
 	#overlay button {

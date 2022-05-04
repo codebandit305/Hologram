@@ -9,18 +9,24 @@
 
 			<style>
 				body {
-					background-color: #bfe3dd;
 					color: #000;
 					margin: 0;
+                    
 				}
 
 				a {
 					color: #2983ff;
 				}
+
+                .full {
+                    height: 100%;
+                    width: 100%;
+                }
 			</style>
 	<body>
 
 		<!-- <button onclick="nextPlanet()" id="next">next</button> -->
+
 
 		<div id="container"></div>
 
@@ -87,7 +93,7 @@
             socket.on("city", (data) => {
                 scroll = data;
                 const PLANET_TEXTURE = new THREE.TextureLoader().load(planets[scroll]);
-                const normalTexture = new THREE.TextureLoader().load('../models/null.jpg');
+                const normalTexture = new THREE.TextureLoader().load('../models/normal.jpg');
                 console.log(scroll);
                 group.add(createPlanet(5, 64, 32, PLANET_TEXTURE, normalTexture));
                 scene.add(group);
@@ -97,10 +103,6 @@
 
 
             // Cube
-
-            const geometry = new THREE.BoxGeometry().toNonIndexed(); // ensure unique vertices for each triangle
-
-            const position = geometry.attributes.position;
             const colors = [];
             const color = new THREE.Color();
 
@@ -108,14 +110,11 @@
 
             renderer = new THREE.WebGLRenderer();
             renderer.setPixelRatio(window.devicePixelRatio);
-            scene.background = new THREE.Color(0x00000);
             renderer.outputEncoding = THREE.sRGBEncoding;
             container.appendChild(renderer.domElement);
 
             const pmremGenerator = new THREE.PMREMGenerator(renderer);
             scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
-
-
 
             effect = new PeppersGhostEffect(renderer);
             effect.setSize(window.innerWidth, window.innerHeight);

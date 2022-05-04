@@ -4,7 +4,6 @@ import { createServer } from "http";
 import path from "path";
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import promptSync from 'prompt-sync';
 
 const app = express();
 const PORT = 8000;
@@ -65,7 +64,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 
-SERVER.listen(PORT, "192.168.1.156", () => {
+SERVER.listen(PORT, "192.168.1.192", () => {
     console.log("Server is running on " + PORT)
 });
 

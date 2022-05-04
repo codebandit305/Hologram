@@ -10,7 +10,7 @@
 
 <style>
     body {
-        background-color: #bfe3dd;
+        background-color: #f8faf1;
         color: #000;
         margin: 0;
     }
@@ -18,12 +18,44 @@
     a {
         color: #2983ff;
     }
+
+    .container {
+        margin-top: 40px;
+        text-align: center;
+    }
+
+
+    .button {
+        display: inline-block;
+        padding: 15px 25px;
+        font-size: 24px;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        outline: none;
+        color: #fff;
+        background-color: #78cef7;
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 9px #999;
+        }
+
+    .button:hover {background-color: #388bb1}
+
+    .button:active {
+    background-color: #388bb1;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+    }
+    
 </style>
 
 <body>
 
-    <button onclick="decreaseNumber()">Left</button>
-    <button onclick="increaseNumber()">Right</button>
+    <div class="container">
+        <button class="button" onclick="decreaseNumber()">Left</button>
+        <button class="button" onclick="increaseNumber()">Right</button>
+    </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
