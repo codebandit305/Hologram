@@ -4,6 +4,7 @@ import { createServer } from "http";
 import path from "path";
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import promptSync from 'prompt-sync';
 
 const app = express();
 const PORT = 8000;
@@ -25,37 +26,28 @@ const __dirname = path.resolve();
 app.use(express.static(__dirname + '/public/'));
 // app.use('/public/build')
 
+
+app.get('/index', (req, res) => {
+    res.sendFile(path.join(__dirname, '/public/index.html'));
+});
+
 app.get('/littlemodel', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/littletokyo/index.html'));
 });
 
-app.get('/index', (req, res) => {
+app.get('/planethologram', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/testhologram/index.html'));
 });
 
-
 io.on('connection', (socket) => {
     console.log('User Connected');
-
-    var city_choice = "";
-
     socket.on("city", (data) => {
-        city_choice = data;
-        if (city_choice) {
-            console.log(city_choice);
-            io.emit('city', data);
-        }
+        console.log(data);
+        io.emit('city', data);
     });
 
     socket.on('disconnect', () => {
         console.log("User Disconnected");
-    });
-
-    socket.on("message", (message) => {
-        if (message) {
-            io.emit("my broadcast", `server: ${message}`);
-            console.log("message" + message);
-        }
     });
 })
 
@@ -73,7 +65,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 
-SERVER.listen(PORT, "192.168.1.192", () => {
+SERVER.listen(PORT, "192.168.1.156", () => {
     console.log("Server is running on " + PORT)
 });
 
